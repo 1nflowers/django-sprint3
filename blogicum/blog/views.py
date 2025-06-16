@@ -7,10 +7,9 @@ current_time = timezone.now()
 
 def index(request):
     template = 'blog/index.html'
-    post_list = Post.objects.select_related('author', 'location', 'category'
-    ).filter(
-        pub_date__lte=current_time, 
-        is_published=True, 
+    post_list = Post.objects.select_related('author', 'location', 'category').filter(
+        pub_date__lte=current_time,
+        is_published=True,
         category__is_published=True
     ).order_by('-pub_date')[:5]
     context = {'post_list': post_list}
@@ -20,9 +19,10 @@ def index(request):
 
 def category_posts(request, category_slug):
     category = get_object_or_404(
-        Category, 
+        Category,
         is_published=True,
-        slug=category_slug)
+        slug=category_slug
+    )
     
     post_list = Post.objects.filter(
         category=category,
@@ -31,8 +31,10 @@ def category_posts(request, category_slug):
     ).order_by('-pub_date')
 
     template = 'blog/category.html'
-    context = {'category': category,
-               'post_list': post_list}
+    context = {
+        'category': category,
+        'post_list': post_list
+    }
     return render(request, template, context)
 
 
