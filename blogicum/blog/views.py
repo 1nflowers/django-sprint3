@@ -8,10 +8,10 @@ current_time = timezone.now()
 def index(request):
     template = 'blog/index.html'
     post_list = Post.objects.select_related(
-        'author', 
-        'location', 
+        'author',
+        'location',
         'category'
-        ).filter(
+    ).filter(
         pub_date__lte=current_time,
         is_published=True,
         category__is_published=True
