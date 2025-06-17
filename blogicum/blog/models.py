@@ -96,7 +96,7 @@ class Post(TimestampMixin):
         related_name='category_posts',
         verbose_name='Категория'
     )
-    objets = PostQuerySet.as_manager()
+    objects = PostQuerySet.as_manager()
 
     class Meta:
         ordering = ['-pub_date']
