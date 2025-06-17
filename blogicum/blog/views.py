@@ -1,21 +1,12 @@
 from django.shortcuts import render, get_object_or_404
-from django.utils import timezone
 from blog.models import Category, Post
 
-current_time = timezone.now()
+POST_LIMIT = 5
 
 
 def index(request):
     template = 'blog/index.html'
-    post_list = Post.objects.select_related(
-        'author',
-        'location',
-        'category'
-    ).filter(
-        pub_date__lte=current_time,
-        is_published=True,
-        category__is_published=True
-    ).order_by('-pub_date')[:5]
+    post_list = Post.objects.published().with_related()[:POST_LIMIT]
     context = {'post_list': post_list}
 
     return render(request, template, context)
@@ -28,12 +19,7 @@ def category_posts(request, category_slug):
         slug=category_slug
     )
 
-    post_list = Post.objects.filter(
-        category=category,
-        is_published=True,
-        pub_date__lte=current_time
-    ).order_by('-pub_date')
-
+    post_list = category.category_posts.published().with_related()
     template = 'blog/category.html'
     context = {
         'category': category,
@@ -44,11 +30,7 @@ def category_posts(request, category_slug):
 
 def post_detail(request, post_id):
     post = get_object_or_404(
-        Post.objects.filter(
-            pub_date__lte=current_time,
-            is_published=True,
-            category__is_published=True
-        ),
+        Post.objects.published().with_related(),
         pk=post_id
     )
     context = {'post': post}
